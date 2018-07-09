@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/barthek7/14_8_GIF_Searcher#readme",
   "devDependencies": {
+    "babel-polyfill": "^6.26.0",
     "http-server": "^0.11.1"
   }
 }

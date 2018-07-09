@@ -34,31 +34,36 @@ App = React.createClass({
                 loading: true
             }
         );
-        this.getGif(searchingText, function (gif) {
-            this.setState({
-                loading: false,
-                gif: gif,
-                searchingText: searchingText
+        this.getGif(searchingText)
+            .then((gif)=>{
+                this.setState({
+                    loading: false,
+                    gif: gif,
+                    searchingText: searchingText
+                });
             });
-            
-        }.bind(this));
+
     },
-    getGif: function(searchingText, callback) {
-        var GIPHY_API_URL = 'https://api.giphy.com';
-        var GIPHY_PUB_KEY = 'W6PxjQy0sPGCRQPkytP63pVW92XwBdvQ';
-        var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                var data = JSON.parse(xhr.responseText).data;
-                var gif = {
-                    url: data.fixed_width_downsampled_url,
-                    sourceUrl: data.url
-                };
-                callback(gif);
-            }
-        };
-        xhr.send();
+    getGif: function(searchingText) {
+        const GIPHY_API_URL = 'https://api.giphy.com';
+        const GIPHY_PUB_KEY = 'W6PxjQy0sPGCRQPkytP63pVW92XwBdvQ';
+        let url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;
+        return new Promise ((resolve, reject)=>{
+            const request = new XMLHttpRequest();
+            request.open('GET', url);
+            request.onload = () => {
+                if (request.status === 200) {
+                    let data = JSON.parse(request.responseText).data;
+                    let gif = {
+                        url: data.fixed_width_downsampled_url,
+                        sourceUrl: data.url
+                    };
+                    resolve(gif);
+                }else{
+                    reject(new Error(`Error ${this.responseText}`));
+                }
+            };
+                request.send();
+        });
     },
 });
